@@ -1,6 +1,8 @@
 package com.esoxjem.movieguide.listing;
 
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -23,7 +25,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class MoviesListingFragment extends Fragment implements IMoviesListingView, MoviesListingAdapter.Callback
+public class MoviesListingFragment extends Fragment implements IMoviesListingView
 {
     @Inject
     IMoviesListingPresenter moviesPresenter;
@@ -52,7 +54,6 @@ public class MoviesListingFragment extends Fragment implements IMoviesListingVie
         setHasOptionsMenu(true);
         setRetainInstance(true);
         BaseApplication.get(getContext()).getAppComponent().plus(new ListingModule(this)).inject(this);
-        moviesPresenter.setView(this);
     }
 
     @Override

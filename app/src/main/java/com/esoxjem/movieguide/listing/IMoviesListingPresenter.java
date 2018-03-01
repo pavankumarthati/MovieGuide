@@ -7,7 +7,5 @@ public interface IMoviesListingPresenter
 {
     void displayMovies();
 
-    void setView(IMoviesListingView view);
-
     void destroy();
 }

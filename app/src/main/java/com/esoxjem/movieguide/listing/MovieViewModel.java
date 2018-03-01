@@ -25,4 +25,12 @@ public class MovieViewModel
     {
         return movies;
     }
+
+    public void setPageNumber(int pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
+    }
 }

@@ -24,4 +24,12 @@ public class VideoViewModel
     {
         return id;
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setVideos(List<Video> videos) {
+        this.videos = videos;
+    }
 }

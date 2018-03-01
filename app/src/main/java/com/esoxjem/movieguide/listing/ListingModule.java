@@ -2,12 +2,17 @@ package com.esoxjem.movieguide.listing;
 
 import android.content.Context;
 
+import android.content.SharedPreferences;
 import com.esoxjem.movieguide.ActivityScope;
+import com.esoxjem.movieguide.IoScheduler;
+import com.esoxjem.movieguide.MainScheduler;
+import com.esoxjem.movieguide.SortingOptionPref;
 import com.esoxjem.movieguide.favorites.IFavoritesInteractor;
 import com.esoxjem.movieguide.sorting.SortingOptionStore;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.Scheduler;
 import retrofit2.Retrofit;
 
 /**
@@ -17,46 +22,38 @@ import retrofit2.Retrofit;
 @Module
 public class ListingModule
 {
-    private MoviesListingFragment moviesListingFragment;
+    private IMoviesListingView moviesListingView;
 
-    public ListingModule(MoviesListingFragment moviesListingFragment)
+    public ListingModule(IMoviesListingView moviesListingView)
     {
-        this.moviesListingFragment = moviesListingFragment;
+        this.moviesListingView = moviesListingView;
     }
 
     @Provides
     @ActivityScope
-    MoviesListingFragment provideMoviesListingFragment()
-    {
-        return moviesListingFragment;
+    IMoviesListingPresenter provideMovieListingPresenter(IMovieListingEndpoint movieListingEndpoint, SortingOptionStore sortingOptionStore,
+        IFavoritesInteractor favoritesInteractor, @IoScheduler Scheduler ioScheduler, @MainScheduler Scheduler mainScheduler, IMoviesListingView view) {
+        return new MoviesListingPresenter(movieListingEndpoint, sortingOptionStore, favoritesInteractor, ioScheduler, mainScheduler, view);
     }
 
     @Provides
     @ActivityScope
-    IMoviesListingPresenter provideMovieListingPresenter(IMovieListingEndpoint movieListingEndpoint, SortingOptionStore sortingOptionStore, IFavoritesInteractor favoritesInteractor)
-    {
-        return new MoviesListingPresenter(movieListingEndpoint, sortingOptionStore, favoritesInteractor);
-    }
-
-    @Provides
-    @ActivityScope
-    IMovieListingEndpoint provideMovieListingEndpoint(Retrofit retrofit)
-    {
+    IMovieListingEndpoint provideMovieListingEndpoint(Retrofit retrofit) {
         return retrofit.create(IMovieListingEndpoint.class);
     }
 
     @Provides
     @ActivityScope
-    SortingOptionStore providesSortingOptionStore(Context context)
+    SortingOptionStore providesSortingOptionStore(@SortingOptionPref SharedPreferences sharedPreferences)
     {
-        return new SortingOptionStore(context);
+        return new SortingOptionStore(sharedPreferences);
     }
 
     @Provides
     @ActivityScope
     IMoviesListingView provideMoviesListingView()
     {
-        return moviesListingFragment;
+        return moviesListingView;
     }
 
     @Provides
@@ -68,8 +65,8 @@ public class ListingModule
 
     @Provides
     @ActivityScope
-    MoviesListingAdapter provideListingAdapter(MovieListingHolderFactory movieListingHolderFactory)
+    MoviesListingAdapter provideListingAdapter(IMoviesListingView moviesListingView, MovieListingHolderFactory movieListingHolderFactory)
     {
-        return new MoviesListingAdapter(moviesListingFragment, movieListingHolderFactory);
+        return new MoviesListingAdapter(moviesListingView, movieListingHolderFactory);
     }
 }

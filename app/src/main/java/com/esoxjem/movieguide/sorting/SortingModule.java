@@ -2,8 +2,10 @@ package com.esoxjem.movieguide.sorting;
 
 import android.content.Context;
 
+import android.content.SharedPreferences;
 import com.esoxjem.movieguide.ActivityScope;
 
+import com.esoxjem.movieguide.SortingOptionPref;
 import dagger.Module;
 import dagger.Provides;
 
@@ -37,9 +39,8 @@ public class SortingModule
 
     @Provides
     @ActivityScope
-    SortingOptionStore providesSortingOptionStore(Context context)
-    {
-        return new SortingOptionStore(context);
+    SortingOptionStore providesSortingOptionStore(@SortingOptionPref SharedPreferences sharedPreferences) {
+        return new SortingOptionStore(sharedPreferences);
     }
 
     @Provides

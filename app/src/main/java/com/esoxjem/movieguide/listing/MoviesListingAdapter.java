@@ -14,18 +14,19 @@ import com.esoxjem.movieguide.Api;
 import com.esoxjem.movieguide.R;
 
 import java.util.List;
+import javax.inject.Inject;
 
 /**
  * @author arun
  */
 public class MoviesListingAdapter extends RecyclerView.Adapter<MovieListingHolder>
 {
-    private Callback callback;
+    private IMoviesListingView callback;
     private List<Movie> movies;
     private Context context;
     MovieListingViewHolderFactory viewHolderFactory;
 
-    public MoviesListingAdapter(Callback callback, MovieListingViewHolderFactory viewHolderFactory)
+    public MoviesListingAdapter(IMoviesListingView callback, MovieListingViewHolderFactory viewHolderFactory)
     {
         this.callback = callback;
         this.viewHolderFactory = viewHolderFactory;
@@ -70,10 +71,5 @@ public class MoviesListingAdapter extends RecyclerView.Adapter<MovieListingHolde
     public void updateMovieList(List<Movie> movies)
     {
         this.movies = movies;
-    }
-
-    public interface Callback
-    {
-        void onMovieClicked(Movie movie);
     }
 }

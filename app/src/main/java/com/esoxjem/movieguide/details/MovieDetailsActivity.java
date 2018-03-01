@@ -11,6 +11,9 @@ import com.esoxjem.movieguide.listing.Movie;
 
 public class MovieDetailsActivity extends AppCompatActivity
 {
+
+    static final String MOVIE_DETAILS_TAG = "movieDetailsFrag";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -26,7 +29,7 @@ public class MovieDetailsActivity extends AppCompatActivity
                 if (movie != null)
                 {
                     MovieDetailsFragment movieDetailsFragment = MovieDetailsFragment.getInstance(movie);
-                    getSupportFragmentManager().beginTransaction().add(R.id.movie_details_container, movieDetailsFragment).commit();
+                    getSupportFragmentManager().beginTransaction().add(R.id.movie_details_container, movieDetailsFragment, MOVIE_DETAILS_TAG).commit();
                 }
             }
         }

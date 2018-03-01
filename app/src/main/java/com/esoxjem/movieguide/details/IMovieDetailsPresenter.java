@@ -17,7 +17,5 @@ public interface IMovieDetailsPresenter
 
     void onFavoriteClick(Movie movie);
 
-    void setView(IMovieDetailsView view);
-
     void destroy();
 }

@@ -20,15 +20,12 @@ import javax.inject.Singleton;
  * @author arun
  */
 @Singleton
-public class FavoritesStore
-{
+public class FavoritesStore {
 
-    private static final String PREF_NAME = "FavoritesStore";
     private SharedPreferences pref;
 
-    public FavoritesStore(Context context)
-    {
-        pref = BaseApplication.get(context).getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+    public FavoritesStore(SharedPreferences pref) {
+        this.pref = pref;
     }
 
     public void setFavorite(Movie movie)

@@ -14,9 +14,9 @@ public class SortingOptionStore
     private static final String SELECTED_OPTION = "selectedOption";
     private static final String PREF_NAME = "SortingOptionStore";
 
-    public SortingOptionStore(Context context)
+    public SortingOptionStore(SharedPreferences sharedPreferences)
     {
-        pref = BaseApplication.get(context).getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        pref = sharedPreferences;
     }
 
     public void setSelectedOption(SortType sortType)

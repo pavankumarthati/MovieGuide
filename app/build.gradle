@@ -1,17 +1,14 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'android-apt'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
 
     defaultConfig {
         applicationId "com.esoxjem.movieguide"
-        minSdkVersion 16
-        targetSdkVersion 24
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -25,6 +22,7 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        abortOnError false
     }
 
     packagingOptions {
@@ -37,24 +35,27 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 repositories {
     maven { url "https://jitpack.io" }
 }
 
-ext {
-    supportVersion = '25.3.1'
-}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //Support
-    compile "com.android.support:design:$supportVersion"
-    compile "com.android.support:support-v4:$supportVersion"
-    compile "com.android.support:support-annotations:$supportVersion"
-    compile "com.android.support:palette-v7:$supportVersion"
-    compile 'com.android.support:multidex:1.0.1'
+    compile "com.android.support:design:$rootProject.ext.supportVersion"
+    compile "com.android.support:support-v4:$rootProject.ext.supportVersion"
+    compile "com.android.support:support-annotations:$rootProject.ext.supportVersion"
+    compile "com.android.support:palette-v7:$rootProject.ext.supportVersion"
+    compile "com.android.support:multidex:$rootProject.ext.multidexVersion"
 
     // Rx
     compile 'io.reactivex.rxjava2:rxjava:2.0.0'
@@ -70,7 +71,7 @@ dependencies {
     // Other
     compile 'net.jcip:jcip-annotations:1.0'
     compile 'com.jakewharton:butterknife:8.4.0'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.0'
 
     // Square
@@ -81,10 +82,18 @@ dependencies {
     compile "com.squareup.okhttp3:logging-interceptor:3.4.1"
 
     // Dependency Injection
-    apt 'com.google.dagger:dagger-compiler:2.5'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.5'
     compile 'com.google.dagger:dagger:2.5'
     provided 'javax.annotation:jsr250-api:1.0'
 
     // Auto factory for Assisted Injection
     compile 'com.google.auto.factory:auto-factory:1.0-beta3'
+    annotationProcessor 'com.google.auto.factory:auto-factory:1.0-beta3'
+    testAnnotationProcessor 'com.google.auto.factory:auto-factory:1.0-beta3'
+
+    // Dependencies for local unit tests
+    testImplementation "junit:junit:$rootProject.ext.junitVersion"
+    testImplementation "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+    testImplementation "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
+    testImplementation "org.robolectric:robolectric:$rootProject.ext.roboelectricVersion"
 }

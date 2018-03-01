@@ -1,11 +1,16 @@
 package com.esoxjem.movieguide.details;
 
+import com.esoxjem.movieguide.IoScheduler;
+import com.esoxjem.movieguide.MainScheduler;
 import com.esoxjem.movieguide.favorites.IFavoritesInteractor;
 import com.esoxjem.movieguide.listing.Movie;
 
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * @author arun
@@ -16,17 +21,18 @@ public class MovieDetailsPresenter implements IMovieDetailsPresenter
     private IFavoritesInteractor favoritesInteractor;
     private IMovieDetailsEndpoint movieDetailsEndpoint;
     private CompositeDisposable compositeDisposable;
+    private Scheduler ioScheduler;
+    private Scheduler mainScheduler;
 
-    public MovieDetailsPresenter(IMovieDetailsEndpoint movieDetailsEndpoint, IFavoritesInteractor favoritesInteractor)
+    @Inject
+    public MovieDetailsPresenter(IMovieDetailsEndpoint movieDetailsEndpoint,
+        IFavoritesInteractor favoritesInteractor, Scheduler ioScheduler, Scheduler mainScheduler, IMovieDetailsView view)
     {
         this.movieDetailsEndpoint = movieDetailsEndpoint;
         this.favoritesInteractor = favoritesInteractor;
         compositeDisposable = new CompositeDisposable();
-    }
-
-    @Override
-    public void setView(IMovieDetailsView view)
-    {
+        this.ioScheduler = ioScheduler;
+        this.mainScheduler = mainScheduler;
         this.view = view;
     }
 
@@ -55,8 +61,8 @@ public class MovieDetailsPresenter implements IMovieDetailsPresenter
     public void showTrailers(Movie movie)
     {
         compositeDisposable.add(movieDetailsEndpoint.getMovieTrailers(movie.getId())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(ioScheduler)
+                .observeOn(mainScheduler)
                 .subscribe(this::onTrailersResult, throwable -> onError()));
     }
 
@@ -80,8 +86,8 @@ public class MovieDetailsPresenter implements IMovieDetailsPresenter
     public void showReviews(Movie movie)
     {
         compositeDisposable.add(movieDetailsEndpoint.getMovieReviews(movie.getId())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(ioScheduler)
+                .observeOn(mainScheduler)
                 .subscribe(this::onReviewsResult, throwable -> onError()));
 
     }
