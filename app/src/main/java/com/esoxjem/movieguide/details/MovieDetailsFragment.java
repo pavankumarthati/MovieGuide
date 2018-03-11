@@ -4,6 +4,8 @@ package com.esoxjem.movieguide.details;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -12,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,20 +23,25 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.esoxjem.movieguide.Api;
 import com.esoxjem.movieguide.BaseApplication;
+import com.esoxjem.movieguide.BuildConfig;
 import com.esoxjem.movieguide.R;
 import com.esoxjem.movieguide.constants.Constants;
 import com.esoxjem.movieguide.listing.Movie;
 
+import com.esoxjem.movieguide.shortcuts.ShortcutHelper;
 import java.util.List;
 
+import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 import static com.esoxjem.movieguide.R.id.trailers_label;
 
@@ -42,8 +50,12 @@ import static com.esoxjem.movieguide.R.id.trailers_label;
  */
 public class MovieDetailsFragment extends Fragment implements IMovieDetailsView, View.OnClickListener
 {
+    private static final String TAG = MovieDetailsFragment.class.getSimpleName();
     @Inject
     IMovieDetailsPresenter movieDetailsPresenter;
+
+    @Inject
+    ShortcutHelper shortcutHelper;
 
     @BindView(R.id.movie_poster)
     ImageView poster;
@@ -93,6 +105,7 @@ public class MovieDetailsFragment extends Fragment implements IMovieDetailsView,
     {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        Timber.tag(TAG);
         BaseApplication.get(getContext()).getAppComponent().plus(new DetailsModule(this)).inject(this);
     }
 
@@ -242,6 +255,10 @@ public class MovieDetailsFragment extends Fragment implements IMovieDetailsView,
         {
             favorite.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_favorite_border_white_24dp));
         }
+
+        if (VERSION.SDK_INT >= VERSION_CODES.N_MR1) {
+            shortcutHelper.removeShortcut(movie.getId());
+        }
     }
 
     @OnClick(R.id.favorite)
@@ -286,9 +303,22 @@ public class MovieDetailsFragment extends Fragment implements IMovieDetailsView,
         startActivity(playVideoIntent);
     }
 
-    private void onFavoriteClick()
-    {
+    private void onFavoriteClick() {
         movieDetailsPresenter.onFavoriteClick(movie);
+        if (VERSION.SDK_INT >= VERSION_CODES.N_MR1) {
+            try {
+                if (!shortcutHelper.addShortcut(movie)
+                    .getAsBoolean()) {
+                    Timber.log(Log.ERROR, "Call to ShortcutManager is rate-limited");
+                    Toast.makeText(this.getActivity(), "Call to ShortcutManager is rate-limited", Toast.LENGTH_LONG)
+                        .show();
+                }
+            } catch (Exception e) {
+                Timber.e(e.toString(), e);
+                Toast.makeText(this.getActivity(), "Error while calling ShortcutManager: " + e.toString(),
+                    Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override

@@ -3,10 +3,15 @@ package com.esoxjem.movieguide;
 import static com.esoxjem.movieguide.constants.Constants.FAVOURITE_PREF;
 import static com.esoxjem.movieguide.constants.Constants.SORTING_OPTION_PREF;
 
+import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.Context;
 
 import android.content.SharedPreferences;
+import android.content.pm.ShortcutManager;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
+import com.esoxjem.movieguide.shortcuts.ShortcutHelper;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -64,5 +69,13 @@ public class AppModule
     public SharedPreferences provideSortingOptionPref(Context context) {
         return context.getApplicationContext().getSharedPreferences(SORTING_OPTION_PREF, Context.MODE_PRIVATE);
     }
+
+    @Provides
+    @Singleton
+    @TargetApi(value = VERSION_CODES.N_MR1)
+    public ShortcutHelper providesShortcutHelper(Context context) {
+        return new ShortcutHelper(context, context.getSystemService(ShortcutManager.class));
+    }
+
 
 }

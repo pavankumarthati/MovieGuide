@@ -6,6 +6,8 @@ import android.os.StrictMode;
 
 import com.esoxjem.movieguide.favorites.FavoritesModule;
 import com.esoxjem.movieguide.network.NetworkModule;
+import timber.log.Timber;
+import timber.log.Timber.DebugTree;
 
 /**
  * @author arun
@@ -25,6 +27,13 @@ public class BaseApplication extends Application
         super.onCreate();
         StrictMode.enableDefaults();
         initAppComponent();
+        initTimber();
+    }
+
+    private void initTimber() {
+      if (BuildConfig.DEBUG) {
+        Timber.plant(new DebugTree());
+      }
     }
 
     public AppComponent initAppComponent()
