@@ -12,12 +12,17 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    testOptions {
+        execution 'ANDROID_TEST_ORCHESTRATOR'
     }
 
     lintOptions {
@@ -58,7 +63,7 @@ dependencies {
     compile "com.android.support:multidex:$rootProject.ext.multidexVersion"
 
     // Rx
-    compile 'io.reactivex.rxjava2:rxjava:2.0.0'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.1'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.0'
 
     // Network
@@ -82,8 +87,8 @@ dependencies {
     compile "com.squareup.okhttp3:logging-interceptor:3.4.1"
 
     // Dependency Injection
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.5'
-    compile 'com.google.dagger:dagger:2.5'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
+    compile 'com.google.dagger:dagger:2.10'
     provided 'javax.annotation:jsr250-api:1.0'
 
     // Auto factory for Assisted Injection
@@ -96,4 +101,14 @@ dependencies {
     testImplementation "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
     testImplementation "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
     testImplementation "org.robolectric:robolectric:$rootProject.ext.roboelectricVersion"
+    testImplementation "org.robolectric:shadows-supportv4:$rootProject.ext.roboelectricVersion"
+
+    //Dependencies for android tests
+    androidTestImplementation "junit:junit:$rootProject.ext.junitVersion"
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestUtil 'com.android.support.test:orchestrator:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.1'
+    androidTestImplementation 'com.squareup.rx.idler:rx2-idler:0.9.0'
 }

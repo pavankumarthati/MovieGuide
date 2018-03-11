@@ -5,7 +5,7 @@ package com.esoxjem.movieguide;
  */
 public class Api
 {
-    public static final String API_KEY = ""; // add your API key here
+    public static final String API_KEY = "63131689ece2d212da425a6533c5ab76"; // add your API key here
     public static final String POSTER_PATH = "http://image.tmdb.org/t/p/w342";
     public static final String BACKDROP_PATH = "http://image.tmdb.org/t/p/w780";
     public static final String YOUTUBE_VIDEO_URL = "http://www.youtube.com/watch?v=%1$s";

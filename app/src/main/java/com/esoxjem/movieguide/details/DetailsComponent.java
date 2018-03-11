@@ -11,5 +11,5 @@ import dagger.Subcomponent;
 @Subcomponent(modules = DetailsModule.class)
 public interface DetailsComponent
 {
-    void inject(IMovieDetailsView movieDetailsView);
+    void inject(MovieDetailsFragment movieDetailsFragment);
 }

@@ -2,6 +2,7 @@ package com.esoxjem.movieguide.details;
 
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -110,6 +111,7 @@ public class MovieDetailsFragment extends Fragment implements IMovieDetailsView,
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
+
         if (getArguments() != null)
         {
             Movie movie = (Movie) getArguments().get(Constants.MOVIE);
