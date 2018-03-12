@@ -13,6 +13,9 @@ import static org.junit.Assert.*;
 
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingRegistry;
+import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.assertion.ViewAssertions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
@@ -77,6 +80,9 @@ public class MoviesListingActivityAndroidTest  {
     startIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
     moviesListingActivityRule.launchActivity(startIntent);
     moviesListingActivity = moviesListingActivityRule.getActivity();
+    RecyclerView view = (RecyclerView) moviesListingActivity.findViewById(R.id.movies_listing);
+    IdlingResource idlingResource = new RecyclerViewIdlingResource(view);
+    IdlingRegistry.getInstance().register(idlingResource);
   }
 
 
@@ -110,10 +116,9 @@ public class MoviesListingActivityAndroidTest  {
   public void displayMoviesTest() throws Exception {
     MoviesListingFragment moviesListingFragment = (MoviesListingFragment) moviesListingActivity.
         getSupportFragmentManager().findFragmentById(R.id.fragment_listing);
-
-    RecyclerView view = moviesListingFragment.getView().findViewById(R.id.movies_listing);
-    assertThat(view.getAdapter(), IsNull.notNullValue());
-    assertThat(view.getAdapter().getItemCount(), IsNot.not(0));
+    RecyclerView recyclerView = (RecyclerView) moviesListingFragment.getView().findViewById(R.id.movies_listing);
+    assertThat(recyclerView.getAdapter(), IsNull.notNullValue());
+    assertThat(recyclerView.getAdapter().getItemCount(), IsNot.not(0));
   }
 
 }
