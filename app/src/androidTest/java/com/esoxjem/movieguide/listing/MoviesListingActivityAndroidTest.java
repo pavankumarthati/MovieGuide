@@ -32,10 +32,12 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.functions.Function;
 import io.reactivex.internal.schedulers.RxThreadFactory;
 import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.TestScheduler;
 import java.util.ArrayList;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -49,9 +51,7 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class MoviesListingActivityAndroidTest  {
-
-  @ClassRule
-  public static final RxImmediateSchedulerRule scheduleRule = new RxImmediateSchedulerRule();
+  TestScheduler testScheduler;
 
   @Rule
   public ActivityTestRule<MoviesListingActivity> moviesListingActivityRule =
@@ -63,19 +63,14 @@ public class MoviesListingActivityAndroidTest  {
 
   MoviesListingActivity moviesListingActivity;
 
-  /*
-    @BeforeClass
-    public static void setupClass() throws Exception {
-      RxJavaPlugins.setInitIoSchedulerHandler(Rx2Idler.create("Rxjava 2.0 Io Scheduler"));
-      RxJavaPlugins.setInitComputationSchedulerHandler(Rx2Idler.create("Rxjava 2.0 computation Scheduler"));
-      RxJavaPlugins.setInitNewThreadSchedulerHandler(Rx2Idler.create("Rxjava 2.0 new thread Scheduler"));
-      RxJavaPlugins.setInitSingleSchedulerHandler(Rx2Idler.create("Rxjava 2.0 single scheduler Scheduler"));
-      RxAndroidPlugins.setInitMainThreadSchedulerHandler(Rx2Idler.create("rxjava 2.0 mainscheduler"));
-    }
-   */
-
   @Before
   public void setup() throws Exception {
+    testScheduler = new TestScheduler();
+    RxJavaPlugins.setInitIoSchedulerHandler(schedulerCallable -> testScheduler);
+    RxJavaPlugins.setInitComputationSchedulerHandler(schedulerCallable -> testScheduler);
+    RxJavaPlugins.setInitNewThreadSchedulerHandler(schedulerCallable -> testScheduler);
+    RxJavaPlugins.setInitSingleSchedulerHandler(schedulerCallable -> testScheduler);
+    RxAndroidPlugins.setInitMainThreadSchedulerHandler(schedulerCallable -> testScheduler);
     Intent startIntent = new Intent(InstrumentationRegistry.getInstrumentation().getTargetContext(), MoviesListingActivity.class);
     startIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
     moviesListingActivityRule.launchActivity(startIntent);
@@ -119,6 +114,7 @@ public class MoviesListingActivityAndroidTest  {
     RecyclerView recyclerView = (RecyclerView) moviesListingFragment.getView().findViewById(R.id.movies_listing);
     assertThat(recyclerView.getAdapter(), IsNull.notNullValue());
     assertThat(recyclerView.getAdapter().getItemCount(), IsNot.not(0));
+    testScheduler.triggerActions();
   }
 
 }
